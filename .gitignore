@@ -11,3 +11,5 @@ wheels/
 
 plan/
 .env
+*.db
+.vscode

@@ -97,11 +97,16 @@ function handleWebSocketEvent(data) {
       addLog(`⚡ ROUTE PATCHED! ${data.old_stop?.name || data.old_stop?.label || 'Station'} ➔ ${data.new_stop?.name || data.new_stop?.label || 'New Station'} in ${data.latency_ms}ms`, "patch");
     }
 
+    // Capture the stop the vehicle is currently heading to BEFORE currentRoute
+    // gets overwritten below, so syncDrivingSegmentAfterPatch can tell whether
+    // the patch changed the vehicle's immediate destination.
+    const previousTargetStop = getCurrentTargetStop();
+
     // Update route data seamlessly
     fetchCurrentRoute(false).then(() => {
       if (isDriving) {
         // Recalculate current segment coordinates so vehicle continues smoothly on new route
-        syncDrivingSegmentAfterPatch();
+        syncDrivingSegmentAfterPatch(previousTargetStop);
       }
     });
     fetchStations();
@@ -498,19 +503,23 @@ async function stepDriveEngine() {
     if (currentRoute.stops && destStopIdx < currentRoute.stops.length) {
       const targetStop = currentRoute.stops[destStopIdx];
       if (targetStop.status === "pending") {
-        // Complete the stop
+        // Complete the stop. completeNextStop() -> advanceVehicleToNextStop()
+        // already advances currentSegmentIdx/currentCoordIdx to the next leg
+        // and loads its road coordinates, so we must NOT redo that below —
+        // doing so used to double-advance and silently skip an entire leg's
+        // road animation (visible as the vehicle jumping ahead).
         await completeNextStop();
-        
+
         // If BSS: show quick swap animation
         if (targetStop.stop_type === "swap_station") {
           addLog(`⚡ Recharged at ${targetStop.label}! Battery restored to 100%.`, "patch");
         }
+      } else {
+        // Defensive fallback: stop was already completed by something else.
+        currentSegmentIdx++;
+        currentCoordIdx = 0;
+        loadCurrentSegmentCoordinates();
       }
-
-      // Move to next segment
-      currentSegmentIdx++;
-      currentCoordIdx = 0;
-      loadCurrentSegmentCoordinates();
 
       if (currentSegmentIdx < (currentRoute.segments?.length || currentRoute.stops.length - 1)) {
         scheduleNextDriveStep();
@@ -557,15 +566,49 @@ function resetVehicleDrive() {
   }
 }
 
-function syncDrivingSegmentAfterPatch() {
+function getCurrentTargetStop() {
+  if (!currentRoute || !currentRoute.stops) return null;
+  const idx = currentSegmentIdx + 1;
+  return idx < currentRoute.stops.length ? currentRoute.stops[idx] : null;
+}
+
+function isSameStop(a, b) {
+  if (!a || !b) return false;
+  return a.stop_type === b.stop_type && a.ref_order_id === b.ref_order_id && a.ref_station_id === b.ref_station_id;
+}
+
+function syncDrivingSegmentAfterPatch(previousTargetStop) {
   if (!currentRoute || !currentRoute.stops) return;
   const pendingIdx = currentRoute.stops.findIndex(s => s.status === "pending");
-  if (pendingIdx !== -1) {
-    currentSegmentIdx = Math.max(0, pendingIdx - 1);
-    currentCoordIdx = 0;
+  if (pendingIdx === -1) return;
+
+  const newTarget = currentRoute.stops[pendingIdx];
+  currentSegmentIdx = Math.max(0, pendingIdx - 1);
+
+  if (isSameStop(previousTargetStop, newTarget)) {
+    // The vehicle's immediate destination didn't change (e.g. a new order was
+    // inserted further down the mutable suffix) — reload the segment geometry
+    // (it's cached, so identical) but keep driving progress as-is instead of
+    // snapping the vehicle back to the start of the leg.
+    const keepCoordIdx = currentCoordIdx;
     loadCurrentSegmentCoordinates();
-    updateVehicleHUD();
+    currentCoordIdx = Math.min(keepCoordIdx, Math.max(0, currentSegmentCoords.length - 1));
+  } else {
+    // The immediate destination changed mid-leg (the station/order the vehicle
+    // was heading to got replaced) — instead of teleporting backward to the
+    // start of the old leg, draw a short direct "rerouting" hop from wherever
+    // the vehicle currently is to the new destination. Normal road-following
+    // resumes automatically from the next leg onward.
+    if (currentVehiclePos && newTarget && newTarget.lat != null && newTarget.lng != null) {
+      currentSegmentCoords = [currentVehiclePos, [newTarget.lat, newTarget.lng]];
+    } else {
+      loadCurrentSegmentCoordinates();
+    }
+    currentCoordIdx = 0;
   }
+
+  updateVehicleMarker();
+  updateVehicleHUD();
 }
 
 function updateVehicleMarker() {
