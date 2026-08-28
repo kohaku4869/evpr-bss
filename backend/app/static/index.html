@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EVPR-BSS Dynamic Real-time Routing System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="logo-group">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <h1 class="app-title">EVPR-BSS Dynamic Routing</h1>
+          <p class="app-subtitle">Electric Vehicle Routing with Real Hanoi Road Network & Instant BSS Rerouting</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <div id="routing-engine-badge" class="status-badge routing">
+          <span class="pulse-dot-cyan"></span>
+          <span id="routing-engine-text">🗺️ TomTom Road Engine</span>
+        </div>
+        <div id="ws-status" class="status-badge connecting">
+          <span class="pulse-dot"></span>
+          <span id="ws-status-text">WS Connecting...</span>
+        </div>
+        <div class="shipper-badge">
+          <span class="shipper-icon">🛵</span>
+          <span>Shipper #1 Active</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- USP Live Alert Banner -->
+    <div id="patch-banner" class="patch-banner hidden">
+      <div class="banner-icon">⚡</div>
+      <div class="banner-content">
+        <div class="banner-title" id="banner-title">DYNAMIC RE-ROUTE DETECTED (USP)</div>
+        <div class="banner-desc" id="banner-desc">Station unavailable. Rerouted to nearest feasible station on real road network.</div>
+      </div>
+      <div class="banner-latency" id="banner-latency">0.0 ms</div>
+      <button class="banner-close" onclick="closeBanner()">✕</button>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+      <!-- Left Column: Map Visualizer, Live Vehicle Controller & Stats -->
+      <section class="left-section">
+        <div class="card map-card">
+          <div class="card-header">
+            <h2 class="card-title">🗺️ Real-time Tour Visualizer (Hanoi Road Network)</h2>
+            <div class="map-legend">
+              <span class="legend-item"><span class="dot depot"></span> Depot</span>
+              <span class="legend-item"><span class="dot pickup"></span> Pickup</span>
+              <span class="legend-item"><span class="dot delivery"></span> Delivery</span>
+              <span class="legend-item"><span class="dot station-avail"></span> BSS (Active)</span>
+              <span class="legend-item"><span class="dot station-down"></span> BSS (Down)</span>
+            </div>
+          </div>
+
+          <div class="canvas-container">
+            <div id="hanoiMap"></div>
+
+            <!-- Floating Live Driving HUD Overlay -->
+            <div id="vehicle-hud" class="vehicle-hud hidden">
+              <div class="hud-status">
+                <span class="hud-icon">🛵</span>
+                <div>
+                  <div class="hud-title" id="hud-status-text">Vehicle Cruising</div>
+                  <div class="hud-sub" id="hud-target-text">Target: Next Stop</div>
+                </div>
+              </div>
+              <div class="hud-metrics">
+                <div class="hud-item">
+                  <span class="hud-label">Battery</span>
+                  <span class="hud-val" id="hud-battery">100%</span>
+                </div>
+                <div class="hud-item">
+                  <span class="hud-label">Load</span>
+                  <span class="hud-val" id="hud-load">0 kg</span>
+                </div>
+                <div class="hud-item">
+                  <span class="hud-label">Speed</span>
+                  <span class="hud-val" id="hud-speed">1x</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Drive Controller Toolbar -->
+          <div class="live-drive-bar">
+            <div class="drive-actions">
+              <button id="btn-drive-toggle" class="btn btn-drive" onclick="toggleLiveDrive()">
+                <span class="btn-icon" id="drive-icon">▶️</span>
+                <span id="drive-label">Start Live Drive</span>
+              </button>
+              <button id="btn-step-stop" class="btn btn-secondary" onclick="completeNextStop()" title="Instantly complete next stop">
+                <span class="btn-icon">⏭️</span> Next Stop
+              </button>
+              <button id="btn-reset-drive" class="btn btn-secondary" onclick="resetVehicleDrive()" title="Reset vehicle position to start">
+                <span class="btn-icon">⏮️</span> Reset Pos
+              </button>
+            </div>
+
+            <div class="speed-controls">
+              <span class="speed-label">Sim Speed:</span>
+              <div class="speed-buttons">
+                <button class="btn-speed active" data-speed="1" onclick="setDriveSpeed(1)">1x</button>
+                <button class="btn-speed" data-speed="2" onclick="setDriveSpeed(2)">2x</button>
+                <button class="btn-speed" data-speed="5" onclick="setDriveSpeed(5)">5x</button>
+                <button class="btn-speed" data-speed="10" onclick="setDriveSpeed(10)">10x</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Dashboard -->
+        <div class="card stats-card">
+          <div class="stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Total Cost (km + fee)</span>
+              <span class="stat-value" id="stat-cost">--</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Road Distance</span>
+              <span class="stat-value" id="stat-distance">-- km</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Stops (Done / Total)</span>
+              <span class="stat-value" id="stat-stops">-- / --</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Est. Vehicle Battery</span>
+              <span class="stat-value battery" id="stat-battery">40.0 / 40 kWh</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Control Center, Stations, Stop Timeline -->
+      <section class="right-section">
+        <!-- Quick Actions Panel -->
+        <div class="card control-card">
+          <div class="card-header">
+            <h2 class="card-title">🎮 Demo Control Center</h2>
+            <div class="order-count-select-wrap">
+              <label for="select-num-orders" class="count-label">Orders:</label>
+              <select id="select-num-orders" class="select-styled">
+                <option value="4">4 Orders</option>
+                <option value="6" selected>6 Orders (Std)</option>
+                <option value="8">8 Orders</option>
+                <option value="10">10 Orders</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button id="btn-randomize" class="btn btn-accent" onclick="randomizeScenario()">
+              <span class="btn-icon">🎲</span> Randomize Scenario
+            </button>
+            <button id="btn-optimize" class="btn btn-primary" onclick="triggerOptimize()">
+              <span class="btn-icon">⚡</span> Run ALNS Optimize
+            </button>
+            <button id="btn-inject-order" class="btn btn-accent" onclick="injectLiveOrder()" title="Inject a new order into the active route mid-drive (reactive layer demo)">
+              <span class="btn-icon">➕</span> New Order (Live)
+            </button>
+            <button id="btn-reset" class="btn btn-secondary" onclick="resetDemo()">
+              <span class="btn-icon">🔄</span> Reset Demo Data
+            </button>
+            <button id="btn-simulator" class="btn btn-dark" onclick="toggleSimulator()">
+              <span class="btn-icon">🤖</span> Auto Sim: <span id="sim-status-label">OFF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- BSS Stations Status & Live Toggle Panel -->
+        <div class="card stations-card">
+          <div class="card-header">
+            <div class="station-header-group">
+              <h2 class="card-title">🔋 Battery Swap Stations (BSS)</h2>
+              <span class="station-count-badge" id="station-count-label">30 Stations</span>
+            </div>
+            <span class="sub-badge">Click toggle to trigger reroute</span>
+          </div>
+
+          <!-- Station Search & Filter Bar -->
+          <div class="station-filter-bar">
+            <input type="text" id="station-search-input" class="search-input" placeholder="🔍 Search station by name or district..." oninput="filterStations()">
+            <div class="filter-chips">
+              <button class="chip active" data-filter="all" onclick="setStationFilter('all')">All</button>
+              <button class="chip" data-filter="avail" onclick="setStationFilter('avail')">Active</button>
+              <button class="chip" data-filter="down" onclick="setStationFilter('down')">Down</button>
+              <button class="chip" data-filter="hoankiem" onclick="setStationFilter('Hoan Kiem')">Hoàn Kiếm</button>
+              <button class="chip" data-filter="caugiay" onclick="setStationFilter('Cau Giay')">Cầu Giấy</button>
+              <button class="chip" data-filter="dongda" onclick="setStationFilter('Dong Da')">Đống Đa</button>
+              <button class="chip" data-filter="tayho" onclick="setStationFilter('Tay Ho')">Tây Hồ</button>
+            </div>
+          </div>
+
+          <div id="stations-list" class="stations-grid">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Route Timeline (Frozen Prefix vs Mutable Suffix) -->
+        <div class="card timeline-card">
+          <div class="card-header">
+            <h2 class="card-title">📍 Route Stops & Prefix State</h2>
+            <div class="timeline-legend">
+              <span class="badge-frozen">🔒 Frozen Prefix</span>
+              <span class="badge-mutable">🔓 Mutable Suffix</span>
+            </div>
+          </div>
+          <div id="stops-timeline" class="stops-timeline">
+            <div class="empty-state">No active route. Click "Run ALNS Optimize" above.</div>
+          </div>
+        </div>
+
+        <!-- Event Log -->
+        <div class="card log-card">
+          <div class="card-header">
+            <h2 class="card-title">📜 Real-time System Event Log</h2>
+            <button class="btn-link" onclick="clearLogs()">Clear</button>
+          </div>
+          <div id="event-logs" class="logs-container">
+            <div class="log-entry info"><span class="log-time">--:--:--</span> System initialized. Ready for demo.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

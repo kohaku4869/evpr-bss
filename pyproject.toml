@@ -1,0 +1,23 @@
+[project]
+name = "evpr-bss"
+version = "0.1.0"
+description = "Electric Vehicle Pickup & Delivery with Battery Swap Stations (EVPR-BSS)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.141.1",
+    "httpx>=0.28.1",
+    "jinja2>=3.1.6",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.15.0",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "sqlalchemy>=2.0.52",
+    "uvicorn[standard]>=0.52.4",
+    "websockets>=17.1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+testpaths = ["backend/tests"]
+asyncio_mode = "auto"
