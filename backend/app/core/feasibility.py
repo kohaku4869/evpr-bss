@@ -51,7 +51,9 @@ def check_feasibility_and_cost(
     battery_max: float = settings.BATTERY_CAPACITY_B,
     base_rate: float = settings.BASE_CONSUMPTION_RATE,
     load_factor: float = settings.LOAD_CONSUMPTION_FACTOR,
-    default_swap_cost: float = settings.DEFAULT_SWAP_COST
+    default_swap_cost: float = settings.DEFAULT_SWAP_COST,
+    min_reserve_ratio: float = settings.BATTERY_MIN_RESERVE_RATIO,
+    swap_target_ratio: float = settings.BATTERY_SWAP_TARGET_RATIO
 ) -> RouteEvaluation:
     """
     Evaluates the full feasibility and cost of a sequence of stops.
@@ -59,9 +61,14 @@ def check_feasibility_and_cost(
     1. Precedence: Pickup before delivery for every order.
     2. Single visit: Each order's pickup and delivery visited at most once.
     3. Vehicle capacity: 0 <= load <= capacity at every stop.
-    4. Battery limits: battery >= 0 on arrival at every stop.
+    4. Battery limits: battery >= min_reserve_ratio * battery_max on arrival at every stop
+       (a safety reserve, not 0, so unplanned reactive detours still have slack).
     5. Swap station validity: station must be available if stations_map is provided.
+
+    A swap/charge only tops the battery back up to swap_target_ratio * battery_max
+    (not a full charge), keeping the reserve model consistent end-to-end.
     """
+    min_reserve = battery_max * min_reserve_ratio
     if not stops:
         return RouteEvaluation(
             is_feasible=True,
@@ -141,14 +148,15 @@ def check_feasibility_and_cost(
             energy = energy_consumption(leg_dist, current_load, base_rate, load_factor)
             arriving_battery = current_battery - energy
 
-            # Check battery depletion (allow small numerical tolerance for floating point)
-            if arriving_battery < -1e-6:
+            # Check battery depletion against the safety reserve floor, not 0
+            # (allow small numerical tolerance for floating point).
+            if arriving_battery < min_reserve - 1e-6:
                 return RouteEvaluation(
                     is_feasible=False,
                     total_cost=float("inf"),
                     total_distance=total_distance,
                     total_swap_cost=total_swap_cost,
-                    reason=f"Battery depleted arriving at stop {i} ({stop.label or stop.stop_type}): battery {arriving_battery:.2f} < 0"
+                    reason=f"Battery depleted below reserve arriving at stop {i} ({stop.label or stop.stop_type}): battery {arriving_battery:.2f} < reserve {min_reserve:.2f}"
                 )
 
         step_batteries.append(max(0.0, arriving_battery))
@@ -196,7 +204,7 @@ def check_feasibility_and_cost(
                         swap_cost = float(st_cost)
 
             total_swap_cost += swap_cost
-            leaving_battery = battery_max  # Battery instant swap to full B
+            leaving_battery = battery_max * swap_target_ratio  # Instant swap, topped up to the target reserve level (not 100%)
 
         current_battery = leaving_battery
         step_leaving_batteries.append(current_battery)

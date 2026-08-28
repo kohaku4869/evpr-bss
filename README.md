@@ -11,7 +11,7 @@ Hệ thống định tuyến xe điện giao hàng tích hợp trạm đổi pin
   - Thứ tự lấy hàng trước giao hàng (Pickup before Delivery).
   - Giới hạn tải trọng xe $Q$.
   - Mức tiêu hao năng lượng $e(l) = \text{distance\_km} \times (\text{base\_rate} + \text{load\_factor} \times \text{load})$.
-  - Đảm bảo pin không bao giờ bị âm ($y \ge 0$) bằng cách tự động chọn trạm đổi pin khả dụng khi cần.
+  - Đảm bảo pin không bao giờ dưới ngưỡng an toàn ($15\%$) bằng cách tự động chọn trạm đổi pin khả dụng khi cần, sau khi sạc đầy pin sẽ ở mức 80%.
   - Tối ưu hóa tổng chi phí $\sum c_{ij} + \sum \text{cost\_swap}$ theo khoảng cách đường bộ thật.
 - **Real-time Reactive Layer (Local Patch) — Trạm đổi pin hỏng**:
   - Khi một trạm đổi pin dự kiến gặp sự cố hoặc cạn pin ($avail_f: 1 \to 0$), hệ thống **lập tức phát hiện và sửa cục bộ đoạn tuyến trong Mutable Suffix** sang trạm thay thế khả dụng gần nhất (theo khoảng cách đường bộ) có chi phí phát sinh nhỏ nhất.

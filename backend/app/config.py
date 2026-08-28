@@ -31,6 +31,14 @@ class Settings(BaseSettings):
     BASE_CONSUMPTION_RATE: float = 2.2  # energy per km with 0 load
     LOAD_CONSUMPTION_FACTOR: float = 0.04  # additional energy per km per unit load
     DEFAULT_SWAP_COST: float = 5.0
+    # Safety reserve model: the vehicle is never allowed to plan/arrive below this
+    # fraction of capacity, and a swap/charge only tops it up to this fraction (not
+    # 100%) rather than a full charge. This keeps a real buffer in the battery at
+    # all times so that when a reactive event fires (station down, new order),
+    # there is still slack to reach a farther station instead of the plan already
+    # having used the pack down to empty.
+    BATTERY_MIN_RESERVE_RATIO: float = 0.15
+    BATTERY_SWAP_TARGET_RATIO: float = 0.80
 
     # Real map/routing parameters
     TOMTOM_API_KEY: str = ""
