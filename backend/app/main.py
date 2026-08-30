@@ -63,6 +63,13 @@ static_dir = os.path.join(os.path.dirname(__file__), "static")
 if os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
+# Driver Mode (React + Vite build output), additive — does not affect /static or /demo
+driver_dist_dir = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "driver-app", "dist")
+)
+if os.path.exists(driver_dist_dir):
+    app.mount("/driver", StaticFiles(directory=driver_dist_dir, html=True), name="driver")
+
 
 @app.get("/demo", include_in_schema=False)
 @app.get("/", include_in_schema=False)

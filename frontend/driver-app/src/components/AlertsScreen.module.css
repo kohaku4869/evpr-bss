@@ -1,0 +1,34 @@
+.list {
+  height: 100%;
+  overflow-y: auto;
+  padding: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.entry {
+  display: flex;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.info { color: var(--text-muted); }
+.patch { color: #34d399; font-weight: 600; }
+.warn { color: var(--accent-amber); }
+.error { color: var(--accent-rose); }
+
+.time {
+  color: var(--text-dim);
+  flex: none;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px 10px;
+  color: var(--text-dim);
+  font-size: 13px;
+  font-family: var(--font-sans);
+}

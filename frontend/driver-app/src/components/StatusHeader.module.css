@@ -1,0 +1,59 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: calc(10px + var(--safe-top)) 14px 10px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--bg-card-border);
+}
+
+.wsBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.wsBadge.connected { color: #34d399; background: rgba(16, 185, 129, 0.15); }
+.wsBadge.reconnecting, .wsBadge.connecting { color: #fbbf24; background: rgba(245, 158, 11, 0.15); }
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.metrics {
+  display: flex;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.metricLabel {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.metricValue {
+  font-weight: 700;
+}
+
+.batteryLow {
+  color: var(--accent-rose);
+}

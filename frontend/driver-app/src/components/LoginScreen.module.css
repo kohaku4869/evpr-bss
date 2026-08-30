@@ -1,0 +1,129 @@
+.login {
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32px 24px;
+  gap: 22px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.logo {
+  font-size: 32px;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 24px rgba(6, 182, 212, 0.35);
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.roleSwitch {
+  display: flex;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  gap: 3px;
+}
+
+.roleBtn {
+  flex: 1;
+  min-height: 40px;
+  border: none;
+  border-radius: calc(var(--radius-md) - 3px);
+  background: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.roleBtn.active {
+  background: var(--accent-cyan);
+  color: #0b0f19;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.input {
+  min-height: 48px;
+  padding: 0 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-size: 14px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent-cyan);
+}
+
+.error {
+  font-size: 12px;
+  color: var(--accent-rose);
+}
+
+.submitBtn {
+  min-height: 48px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+  margin-top: 6px;
+}
+
+.forgot {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.footnote {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 10px;
+}

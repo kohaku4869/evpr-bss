@@ -1,0 +1,80 @@
+:root {
+  --bg-primary: #0b0f19;
+  --bg-card: rgba(19, 27, 46, 0.92);
+  --bg-card-border: rgba(255, 255, 255, 0.08);
+
+  --accent-cyan: #06b6d4;
+  --accent-blue: #3b82f6;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, monospace;
+
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Leaflet divIcon markers are injected as raw HTML outside React/CSS-module
+   scope, so their styles must live in this global stylesheet. */
+.stop-divicon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stop-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  color: #fff;
+  font: 700 10px var(--font-mono);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+.stop-pin--depot { background: var(--accent-blue); border-radius: 6px; }
+.stop-pin--pickup { background: var(--accent-emerald); }
+.stop-pin--delivery { background: var(--accent-cyan); border-radius: 6px; }
+.stop-pin--vehicle {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  font-size: 24px;
+  width: 32px;
+  height: 32px;
+  filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.8));
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #111827;
+  color: #e5e7eb;
+}

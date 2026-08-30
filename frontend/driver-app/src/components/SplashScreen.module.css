@@ -1,0 +1,44 @@
+.splash {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: radial-gradient(at 50% 30%, rgba(6, 182, 212, 0.18) 0%, var(--bg-primary) 65%);
+}
+
+.logo {
+  font-size: 56px;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  width: 96px;
+  height: 96px;
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 40px rgba(6, 182, 212, 0.4);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.loading {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-dim);
+}

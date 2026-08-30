@@ -13,3 +13,6 @@ plan/
 .env
 *.db
 .vscode
+
+# JS tooling (frontend/driver-app)
+node_modules/
