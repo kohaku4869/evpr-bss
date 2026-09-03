@@ -1,0 +1,83 @@
+:root {
+  /* Dark teal-tinted background (not plain navy) so the whole page reads as
+     teal-themed, not just the accent buttons. */
+  --bg-primary: #071614;
+  --bg-surface: #0a1f1c;
+  --bg-card: rgba(12, 32, 29, 0.92);
+  --bg-card-alt: rgba(20, 184, 166, 0.05);
+  --bg-card-border: rgba(20, 184, 166, 0.14);
+
+  /* Same teal brand accent as driver-app/src/styles/tokens.css. */
+  --accent-primary: #14b8a6;
+  --accent-secondary: #0d9488;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, monospace;
+
+  /* Desktop-oriented scale — a notch larger across the board than the mobile
+     app since this is read at arm's length on an ops-center monitor. */
+  --fs-2xs: 11px;
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-md: 15px;
+  --fs-lg: 18px;
+  --fs-xl: 22px;
+  --fs-2xl: 28px;
+
+  /* Suggestion / load severity levels, shared by SuggestionCard and the
+     station load bar so both read the same color vocabulary. */
+  --severity-info: var(--accent-primary);
+  --severity-warning: var(--accent-amber);
+  --severity-critical: var(--accent-rose);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #0c211e;
+  color: #e5e7eb;
+}
+
+/* Leaflet divIcon markers are injected as raw HTML outside CSS-module scope,
+   so their styles live in this global stylesheet (same approach as
+   driver-app/src/styles/tokens.css's .stop-pin classes). */
+.shipper-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  font-size: 15px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+  background: var(--accent-secondary);
+}
+
+.shipper-pin--idle { background: var(--text-dim); }
+.shipper-pin--charging { background: var(--accent-amber); }
+.shipper-pin--maintenance { background: var(--accent-rose); }

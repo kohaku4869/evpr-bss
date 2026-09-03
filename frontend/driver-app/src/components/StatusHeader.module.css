@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 999px;
@@ -33,9 +33,11 @@
 
 .metrics {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px 12px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 .metric {
@@ -45,7 +47,7 @@
 }
 
 .metricLabel {
-  font-size: 9px;
+  font-size: var(--fs-2xs);
   text-transform: uppercase;
   color: var(--text-dim);
 }

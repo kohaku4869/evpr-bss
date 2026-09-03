@@ -1,0 +1,60 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--bg-card-border);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.list {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--bg-card-border);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.name {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.meta {
+  font-size: var(--fs-2xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.battery {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--accent-primary);
+}
+
+.battery.batteryLow {
+  color: var(--accent-rose);
+}

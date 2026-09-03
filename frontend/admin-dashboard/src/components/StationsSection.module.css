@@ -1,0 +1,186 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  min-height: 0;
+}
+
+.header {
+  flex: none;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+
+.filterBar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search {
+  flex: 1;
+  max-width: 320px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: var(--fs-xs);
+  padding: 8px 12px;
+}
+
+.chips {
+  display: flex;
+  gap: 6px;
+}
+
+.chip {
+  padding: 6px 12px;
+  border: 1px solid var(--bg-card-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chipActive {
+  background: rgba(20, 184, 166, 0.16);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  align-content: start;
+  padding-bottom: 4px;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+}
+
+.cardOverloaded {
+  border-color: rgba(244, 63, 94, 0.4);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cardTitleGroup {
+  min-width: 0;
+}
+
+.name {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status {
+  font-size: var(--fs-2xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.loadBadge {
+  flex: none;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--fs-xs);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.loadOk { background: rgba(20, 184, 166, 0.15); color: var(--accent-primary); }
+.loadWarning { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+.loadCritical { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
+
+.summaryRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: var(--fs-2xs);
+  color: var(--text-muted);
+}
+
+.summaryRow b {
+  color: var(--text-main);
+  font-family: var(--font-mono);
+}
+
+.slotGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  height: 60px;
+}
+
+.slotTrack {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.slotFill {
+  width: 100%;
+  border-radius: 2px;
+  transition: height 0.3s ease;
+}
+
+.slotEmpty { background: rgba(255, 255, 255, 0.12); }
+.slotCritical { background: var(--accent-rose); }
+.slotWarning { background: var(--accent-amber); }
+.slotOk { background: var(--accent-primary); }
+.slotFull { background: #5eead4; }
+
+.toggleBtn {
+  padding: 7px 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: rgba(244, 63, 94, 0.12);
+  color: var(--accent-rose);
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.toggleBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

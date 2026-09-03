@@ -1,0 +1,128 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.grid > :last-child {
+  grid-column: 1 / -1;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+}
+
+.cardTitle {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.chartBox {
+  height: 220px;
+}
+
+.tooltip {
+  background: #0c211e;
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: var(--fs-2xs);
+  color: var(--text-main);
+}
+
+.tooltipLabel {
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.tcoRow {
+  display: flex;
+  gap: 12px;
+}
+
+.tcoBox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: var(--bg-card-alt);
+  border-radius: var(--radius-sm);
+}
+
+.tcoLabel {
+  font-size: var(--fs-2xs);
+  color: var(--text-muted);
+}
+
+.tcoValue {
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.tcoValueMuted {
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.savedBanner {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgba(20, 184, 166, 0.12);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  color: var(--text-main);
+  text-align: center;
+}
+
+.sohList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sohRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sohInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-xs);
+}
+
+.sohName {
+  font-weight: 600;
+}
+
+.sohCycles {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.sohTrack {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.sohFill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent-primary);
+}
+
+.sohFillDue {
+  background: var(--accent-rose);
+}

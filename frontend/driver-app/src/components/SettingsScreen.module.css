@@ -30,7 +30,7 @@
   min-height: 48px;
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid var(--bg-card-border);
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 
 .row:last-child {
@@ -38,7 +38,7 @@
 }
 
 .rowValue {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-dim);
 }
 
@@ -55,7 +55,7 @@
 }
 
 .switch.on {
-  background: var(--accent-cyan);
+  background: var(--accent-primary);
 }
 
 .switchThumb {
@@ -71,4 +71,19 @@
 
 .switch.on .switchThumb {
   transform: translateX(18px);
+}
+
+.select,
+.numberInput {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: var(--fs-sm);
+  padding: 6px 10px;
+}
+
+.numberInput {
+  width: 70px;
+  text-align: right;
 }

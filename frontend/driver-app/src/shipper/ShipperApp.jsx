@@ -4,23 +4,49 @@ import { useCurrentRoute } from '../hooks/useCurrentRoute';
 import { useStations } from '../hooks/useStations';
 import { useDriveEngine } from '../hooks/useDriveEngine';
 import { useRouteSocket } from '../hooks/useRouteSocket';
+import { useShipperSettings } from '../hooks/useShipperSettings';
+import { useBatteryCheckIn } from '../hooks/useBatteryCheckIn';
 import { deriveVehicleStatus } from '../drivingEngine';
+import { findNearestStation } from '../geo';
 import StatusHeader from '../components/StatusHeader';
 import MapView from '../components/MapView';
 import NextStopCard from '../components/NextStopCard';
 import AlertBanner from '../components/AlertBanner';
 import StopListScreen from '../components/StopListScreen';
+import StationStatusScreen from '../components/StationStatusScreen';
 import AlertsScreen from '../components/AlertsScreen';
 import ProfileScreen from '../components/ProfileScreen';
 import HistoryScreen from '../components/HistoryScreen';
 import SettingsScreen from '../components/SettingsScreen';
 import BottomNav from '../components/BottomNav';
+import LowBatteryWarningScreen from '../components/LowBatteryWarningScreen';
+import NavigateToStationScreen from '../components/NavigateToStationScreen';
+import BatteryCheckInModal from '../components/BatteryCheckInModal';
 
 const MAX_ALERTS = 50;
+
+// Mirrors backend/app/config.py's BASE_CONSUMPTION_RATE default (kWh per km
+// at zero load) — no API exposes it today, so the client-side "range" hint
+// approximates with the same constant rather than a real per-shipment figure.
+const BASE_CONSUMPTION_RATE_KM = 2.2;
+
+// No live speed telemetry either, so "time until empty" is range/assumed-speed
+// rather than a real ETA — a typical Hanoi delivery-moped urban average.
+const AVG_URBAN_SPEED_KMH = 25;
+
+function formatMinutesToEmpty(minutes) {
+  if (minutes == null) return null;
+  if (minutes < 1) return '< 1 phút';
+  if (minutes < 60) return `~${minutes} phút`;
+  const hours = Math.floor(minutes / 60);
+  const rem = minutes % 60;
+  return rem === 0 ? `~${hours}h` : `~${hours}h${rem}p`;
+}
 
 const TABS = [
   { key: 'map', icon: '🗺️', label: 'Bản đồ' },
   { key: 'stops', icon: '📍', label: 'Lộ trình' },
+  { key: 'stations', icon: '🔋', label: 'Trạm pin' },
   { key: 'alerts', icon: '📜', label: 'Thông báo' },
   { key: 'profile', icon: '👤', label: 'Cá nhân' },
 ];
@@ -37,6 +63,12 @@ export default function ShipperApp({ onLogout }) {
 
   const { route, refetch, applyRoute } = useCurrentRoute();
   const stationsApi = useStations();
+  const { settings, updateSettings } = useShipperSettings();
+
+  // null | 'warning' | 'navigate'. Reset whenever battery recovers above the
+  // threshold so a later low-battery episode can prompt again.
+  const [lowBatteryFlow, setLowBatteryFlow] = useState(null);
+  const [lowBatterySnoozed, setLowBatterySnoozed] = useState(false);
 
   const onPositionChange = useCallback((pos) => {
     mapApiRef.current?.setVehiclePosition(pos);
@@ -118,6 +150,42 @@ export default function ShipperApp({ onLogout }) {
 
   const { batteryPercent, batteryKwh, load } = deriveVehicleStatus(route, driveEngine.targetStop);
 
+  const referenceStop = driveEngine.targetStop;
+  const nearestStationInfo = referenceStop
+    ? findNearestStation(stationsApi.stations, referenceStop.lat, referenceStop.lng)
+    : null;
+  const rangeKm = route ? Math.round(batteryKwh / BASE_CONSUMPTION_RATE_KM) : null;
+  const minutesToEmpty = rangeKm != null ? Math.round((rangeKm / AVG_URBAN_SPEED_KMH) * 60) : null;
+  const timeToEmptyLabel = formatMinutesToEmpty(minutesToEmpty);
+
+  const isLowBattery = !!route && batteryPercent != null && batteryPercent <= settings.warningThresholdPercent;
+
+  useEffect(() => {
+    if (!isLowBattery) {
+      setLowBatteryFlow(null);
+      setLowBatterySnoozed(false);
+      return;
+    }
+    if (!lowBatterySnoozed && lowBatteryFlow === null) {
+      setLowBatteryFlow('warning');
+    }
+  }, [isLowBattery, lowBatterySnoozed, lowBatteryFlow]);
+
+  const handleApproveLowBattery = useCallback(() => {
+    setLowBatteryFlow('navigate');
+  }, []);
+
+  const handleDismissLowBattery = useCallback(() => {
+    setLowBatterySnoozed(true);
+    setLowBatteryFlow(null);
+  }, []);
+
+  const checkIn = useBatteryCheckIn(!!route);
+
+  const targetStopSwapFee = driveEngine.targetStop?.stop_type === 'swap_station'
+    ? stationsApi.stations.find((s) => s.id === driveEngine.targetStop.ref_station_id)?.cost_swap
+    : null;
+
   return (
     <div className={styles.app}>
       <StatusHeader
@@ -125,30 +193,82 @@ export default function ShipperApp({ onLogout }) {
         batteryPercent={route ? batteryPercent : null}
         batteryKwh={route ? batteryKwh : null}
         load={route ? load : null}
+        rangeKm={route ? rangeKm : null}
+        timeToEmptyLabel={route ? timeToEmptyLabel : null}
+        nearestStationKm={nearestStationInfo ? Math.round(nearestStationInfo.distanceKm * 10) / 10 : null}
       />
 
       <div className={styles.screen}>
-        {activeTab === 'map' && (
+        {lowBatteryFlow === 'navigate' && nearestStationInfo ? (
+          <NavigateToStationScreen
+            route={route}
+            stations={stationsApi.stations}
+            station={nearestStationInfo.station}
+            distanceKm={nearestStationInfo.distanceKm}
+            onClose={handleDismissLowBattery}
+          />
+        ) : (
           <>
-            <MapView ref={mapApiRef} route={route} stations={stationsApi.stations} targetStop={driveEngine.targetStop} />
-            <AlertBanner banner={banner} onClose={closeBanner} />
-            <NextStopCard phase={driveEngine.phase} targetStop={driveEngine.targetStop} onComplete={handleCompleteStop} />
+            {activeTab === 'map' && (
+              <>
+                <MapView ref={mapApiRef} route={route} stations={stationsApi.stations} targetStop={driveEngine.targetStop} />
+                <AlertBanner banner={banner} onClose={closeBanner} />
+                <NextStopCard
+                  phase={driveEngine.phase}
+                  targetStop={driveEngine.targetStop}
+                  batteryPercent={route ? batteryPercent : null}
+                  swapFeeUsd={targetStopSwapFee}
+                  remainingStopsCount={route?.stops?.filter((s) => s.status === 'pending').length ?? 0}
+                  onOpenStopList={() => setActiveTab('stops')}
+                  onComplete={handleCompleteStop}
+                />
+              </>
+            )}
+            {activeTab === 'stops' && <StopListScreen route={route} />}
+            {activeTab === 'stations' && (
+              <StationStatusScreen
+                stations={stationsApi.stations}
+                referenceLat={referenceStop?.lat}
+                referenceLng={referenceStop?.lng}
+              />
+            )}
+            {activeTab === 'alerts' && <AlertsScreen alerts={alerts} />}
+            {activeTab === 'profile' && profileView === 'home' && (
+              <ProfileScreen
+                onOpenHistory={() => setProfileView('history')}
+                onOpenSettings={() => setProfileView('settings')}
+                onLogout={handleLogout}
+              />
+            )}
+            {activeTab === 'profile' && profileView === 'history' && (
+              <HistoryScreen onBack={() => setProfileView('home')} />
+            )}
+            {activeTab === 'profile' && profileView === 'settings' && (
+              <SettingsScreen onBack={() => setProfileView('home')} settings={settings} onUpdateSettings={updateSettings} />
+            )}
+
+            {lowBatteryFlow === 'warning' && (
+              <LowBatteryWarningScreen
+                batteryPercent={batteryPercent}
+                thresholdPercent={settings.warningThresholdPercent}
+                stationName={nearestStationInfo?.station?.name}
+                timeToEmptyLabel={timeToEmptyLabel}
+                onApprove={handleApproveLowBattery}
+                onReject={handleDismissLowBattery}
+              />
+            )}
           </>
         )}
-        {activeTab === 'stops' && <StopListScreen route={route} />}
-        {activeTab === 'alerts' && <AlertsScreen alerts={alerts} />}
-        {activeTab === 'profile' && profileView === 'home' && (
-          <ProfileScreen
-            onOpenHistory={() => setProfileView('history')}
-            onOpenSettings={() => setProfileView('settings')}
-            onLogout={handleLogout}
+
+        {checkIn.duePrompt && !lowBatteryFlow && (
+          <BatteryCheckInModal
+            checkpoint={checkIn.duePrompt}
+            predictedPercent={route ? batteryPercent : null}
+            vehicleType={settings.vehicleType}
+            batteryCapacityKwh={settings.batteryCapacityKwh}
+            onSubmit={(reading) => checkIn.dismiss(reading)}
+            onSkip={() => checkIn.dismiss(null)}
           />
-        )}
-        {activeTab === 'profile' && profileView === 'history' && (
-          <HistoryScreen onBack={() => setProfileView('home')} />
-        )}
-        {activeTab === 'profile' && profileView === 'settings' && (
-          <SettingsScreen onBack={() => setProfileView('home')} />
         )}
       </div>
 

@@ -12,7 +12,7 @@ wheels/
 plan/
 .env
 *.db
+*.sqlite
+*.sqlite3
 .vscode
-
-# JS tooling (frontend/driver-app)
-node_modules/
+node_modules

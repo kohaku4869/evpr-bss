@@ -24,13 +24,13 @@
 }
 
 .activeTitle {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   color: #67e8f9;
 }
 
 .activeDetail {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -47,18 +47,18 @@
 }
 
 .cardTitle {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 700;
 }
 
 .cardDetail {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   margin-top: 2px;
 }
 
 .cardDate {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-dim);
   margin-top: 2px;
 }
@@ -73,11 +73,11 @@
 .fare {
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .status {
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 999px;
@@ -91,5 +91,5 @@
   text-align: center;
   padding: 40px 10px;
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }

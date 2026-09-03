@@ -16,14 +16,14 @@
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-md);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .item.done { opacity: 0.55; border-left: 3px solid var(--accent-emerald); }
 .item.active {
   background: rgba(59, 130, 246, 0.15);
   border-color: rgba(59, 130, 246, 0.5);
-  border-left: 4px solid var(--accent-cyan);
+  border-left: 4px solid var(--accent-primary);
 }
 .item.pending { border-left: 3px solid var(--text-dim); }
 
@@ -37,7 +37,7 @@
 .seq {
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-dim);
   width: 20px;
   flex: none;
@@ -46,7 +46,7 @@
 .tag {
   padding: 2px 6px;
   border-radius: 4px;
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
   text-transform: uppercase;
   flex: none;
@@ -64,7 +64,7 @@
 }
 
 .badge {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   flex: none;
 }
@@ -73,5 +73,5 @@
   text-align: center;
   padding: 40px 10px;
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }

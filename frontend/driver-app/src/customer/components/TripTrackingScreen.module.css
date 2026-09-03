@@ -32,7 +32,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,12 +47,12 @@
 }
 
 .driverName {
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 700;
 }
 
 .driverMeta {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }
 
@@ -67,7 +67,7 @@
   border-radius: 50%;
   border: 1px solid var(--bg-card-border);
   background: rgba(255, 255, 255, 0.04);
-  font-size: 16px;
+  font-size: var(--fs-md);
   cursor: pointer;
 }
 
@@ -85,7 +85,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-dim);
 }
 
@@ -110,7 +110,7 @@
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--bg-card-border);
   border-radius: var(--radius-md);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
@@ -119,9 +119,9 @@
   border: none;
   border-radius: var(--radius-md);
   font-weight: 700;
-  font-size: 15px;
+  font-size: var(--fs-md);
   cursor: pointer;
-  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   color: #fff;
 }
 
@@ -132,6 +132,6 @@
   background: rgba(244, 63, 94, 0.1);
   color: var(--accent-rose);
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   cursor: pointer;
 }

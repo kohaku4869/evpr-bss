@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { MapContainer, TileLayer, CircleMarker, GeoJSON, Marker, Polyline, Popup, useMap } from 'react-leaflet';
-import { stopDivIcon, vehicleDivIcon } from '../mapIcons';
+import { MapContainer, TileLayer, GeoJSON, Marker, Polyline, Popup, useMap } from 'react-leaflet';
+import { stopDivIcon, stationDivIcon, vehicleDivIcon } from '../mapIcons';
 import styles from './MapView.module.css';
 
 const HANOI_CENTER = [21.0285, 105.8542];
@@ -20,7 +20,7 @@ function routeStyle(route) {
     const toStop = route.stops?.[props.to_sequence_index];
     const isFrozen = fromStop?.status === 'done' && toStop?.status === 'done';
     return {
-      color: isFrozen ? '#10b981' : '#06b6d4',
+      color: isFrozen ? '#10b981' : '#14b8a6',
       weight: isFrozen ? 3.5 : 5,
       opacity: isFrozen ? 0.75 : 0.95,
       dashArray: isFrozen ? '6, 6' : null,
@@ -89,24 +89,25 @@ const MapView = forwardRef(function MapView({ route, stations, targetStop }, ref
         maxZoom={19}
       />
 
-      {stations.map((st) => (
-        <CircleMarker
-          key={st.id}
-          center={[st.lat, st.lng]}
-          radius={8}
-          pathOptions={{
-            color: st.is_available ? '#f59e0b' : '#f43f5e',
-            fillColor: st.is_available ? '#f59e0b' : '#f43f5e',
-            fillOpacity: st.is_available ? 0.35 : 0.5,
-            weight: 2,
-          }}
-        >
-          <Popup>
-            <b>{st.is_available ? '⚡' : '✕ Ngưng hoạt động'} {st.name}</b><br />
-            Phí đổi pin: ${st.cost_swap?.toFixed?.(1)}
-          </Popup>
-        </CircleMarker>
-      ))}
+      {stations.map((st) => {
+        const isOnRoute = (route?.stops || []).some(
+          (s) => s.stop_type === 'swap_station' && s.ref_station_id === st.id
+        );
+        return (
+          <Marker
+            key={st.id}
+            position={[st.lat, st.lng]}
+            icon={stationDivIcon(st.is_available, isOnRoute)}
+            zIndexOffset={isOnRoute ? 1000 : 0}
+          >
+            <Popup>
+              <b>{st.is_available ? '⚡' : '✕ Ngưng hoạt động'} {st.name}</b><br />
+              {isOnRoute && <><b>📍 Trạm trong lộ trình của bạn</b><br /></>}
+              Phí đổi pin: ${st.cost_swap?.toFixed?.(1)}
+            </Popup>
+          </Marker>
+        );
+      })}
 
       {hasGeometry && (
         <GeoJSON
@@ -116,7 +117,7 @@ const MapView = forwardRef(function MapView({ route, stations, targetStop }, ref
         />
       )}
       {fallbackPolyline && (
-        <Polyline positions={fallbackPolyline} pathOptions={{ color: '#06b6d4', weight: 3.5, opacity: 0.8, dashArray: '4, 6' }} />
+        <Polyline positions={fallbackPolyline} pathOptions={{ color: '#14b8a6', weight: 3.5, opacity: 0.8, dashArray: '4, 6' }} />
       )}
 
       {(route?.stops || []).map((stop) => {

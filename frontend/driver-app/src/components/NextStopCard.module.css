@@ -10,6 +10,8 @@
   border: 1px solid var(--bg-card-border);
   border-radius: var(--radius-lg);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  max-height: calc(100% - 24px);
+  overflow-y: auto;
 }
 
 .card.arrived {
@@ -17,25 +19,74 @@
   box-shadow: 0 0 24px rgba(16, 185, 129, 0.25);
 }
 
-.row {
+.topRow {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
   gap: 10px;
 }
 
-.info {
+.stopCountBadge {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.stopCountNum {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stopCountLabel {
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.orderInfo,
+.swapInfo {
+  flex: 1;
   min-width: 0;
+}
+
+.navBtn {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-decoration: none;
+  color: var(--accent-primary);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.navIcon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(20, 184, 166, 0.18);
+  font-size: 16px;
 }
 
 .tag {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 4px;
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   font-weight: 700;
-  text-transform: uppercase;
-  margin-bottom: 4px;
 }
 
 .tag.pickup { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
@@ -43,28 +94,93 @@
 .tag.swap_station { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
 .tag.depot { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
 
-.label {
-  font-size: 15px;
+.orderSub {
+  margin-top: 4px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.status {
-  font-size: 12px;
+.label {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.addressBlock {
+  margin-top: 12px;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.noteLine {
+  margin-top: 4px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
-  margin-top: 2px;
+  font-style: italic;
+}
+
+.feeRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.feeAmount {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.paymentPill {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  font-size: var(--fs-2xs);
+  font-weight: 700;
+}
+
+.actionsRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--bg-card-border);
+}
+
+.actionItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+}
+
+.actionIcon {
+  font-size: 18px;
+}
+
+.actionLabel {
+  font-size: 10px;
+  text-align: center;
 }
 
 .completeBtn {
-  flex: none;
-  padding: 12px 18px;
-  min-height: 44px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px 18px;
+  min-height: 48px;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: 999px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   cursor: pointer;
   background: linear-gradient(135deg, #059669, #10b981);
   color: #fff;
@@ -72,11 +188,60 @@
 }
 
 .completeBtn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
 }
 
 .emptyCard {
   text-align: center;
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: var(--fs-sm);
+}
+
+.swapCard {
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.swapCard.arrived {
+  border-color: rgba(245, 158, 11, 0.7);
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.3);
+}
+
+.swapTitle {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: #fcd34d;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.swapMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.batteryPill,
+.feePill {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+}
+
+.batteryPillLow {
+  background: rgba(244, 63, 94, 0.2);
+  color: #fda4af;
+}
+
+.swapHint {
+  margin-top: 6px;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
 }

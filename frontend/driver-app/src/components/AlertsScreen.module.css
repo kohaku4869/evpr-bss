@@ -3,7 +3,7 @@
   overflow-y: auto;
   padding: 14px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -29,6 +29,6 @@
   text-align: center;
   padding: 40px 10px;
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-family: var(--font-sans);
 }

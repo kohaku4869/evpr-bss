@@ -17,23 +17,23 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 20px;
+  font-size: var(--fs-xl);
   color: #fff;
   flex: none;
 }
 
 .name {
-  font-size: 17px;
+  font-size: var(--fs-lg);
   font-weight: 700;
 }
 
 .meta {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -53,13 +53,13 @@
 }
 
 .statValue {
-  font-size: 16px;
+  font-size: var(--fs-md);
   font-weight: 700;
   font-family: var(--font-mono);
 }
 
 .statLabel {
-  font-size: 10px;
+  font-size: var(--fs-2xs);
   color: var(--text-dim);
   text-transform: uppercase;
   margin-top: 2px;
@@ -84,7 +84,7 @@
   border: none;
   border-bottom: 1px solid var(--bg-card-border);
   color: var(--text-main);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   cursor: pointer;
   text-align: left;
 }
@@ -110,6 +110,6 @@
   background: rgba(244, 63, 94, 0.1);
   color: var(--accent-rose);
   font-weight: 700;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   cursor: pointer;
 }

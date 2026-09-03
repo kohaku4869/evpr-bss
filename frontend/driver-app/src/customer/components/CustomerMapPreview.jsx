@@ -38,7 +38,7 @@ export default function CustomerMapPreview({ pickupLabel, dropoffLabel, progress
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         maxZoom={19}
       />
-      <Polyline positions={[pickup, dropoff]} pathOptions={{ color: '#06b6d4', weight: 3.5, opacity: 0.8, dashArray: '4, 6' }} />
+      <Polyline positions={[pickup, dropoff]} pathOptions={{ color: '#14b8a6', weight: 3.5, opacity: 0.8, dashArray: '4, 6' }} />
       <Marker position={pickup} icon={stopDivIcon('pickup', 'A')}>
         <Popup>{pickupLabel}</Popup>
       </Marker>

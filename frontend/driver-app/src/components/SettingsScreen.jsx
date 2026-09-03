@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import SubScreenHeader from './SubScreenHeader';
+import { VEHICLE_TYPES } from '../hooks/useShipperSettings';
 import styles from './SettingsScreen.module.css';
 
 function Switch({ on, onToggle }) {
@@ -10,7 +11,7 @@ function Switch({ on, onToggle }) {
   );
 }
 
-export default function SettingsScreen({ onBack }) {
+export default function SettingsScreen({ onBack, settings, onUpdateSettings }) {
   const [pushEnabled, setPushEnabled] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
@@ -18,6 +19,44 @@ export default function SettingsScreen({ onBack }) {
     <div className={styles.wrap}>
       <SubScreenHeader title="Cài đặt" onBack={onBack} />
       <div className={styles.content}>
+        <div className={styles.menu}>
+          <div className={styles.row}>
+            <span>Loại xe</span>
+            <select
+              className={styles.select}
+              value={settings.vehicleType}
+              onChange={(e) => onUpdateSettings({ vehicleType: e.target.value })}
+            >
+              {VEHICLE_TYPES.map((v) => (
+                <option key={v.value} value={v.value}>{v.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className={styles.row}>
+            <span>Dung lượng pin (kWh)</span>
+            <input
+              type="number"
+              min="1"
+              step="1"
+              className={styles.numberInput}
+              value={settings.batteryCapacityKwh}
+              onChange={(e) => onUpdateSettings({ batteryCapacityKwh: Number(e.target.value) || 0 })}
+            />
+          </div>
+          <div className={styles.row}>
+            <span>Ngưỡng cảnh báo pin yếu (%)</span>
+            <input
+              type="number"
+              min="1"
+              max="99"
+              step="1"
+              className={styles.numberInput}
+              value={settings.warningThresholdPercent}
+              onChange={(e) => onUpdateSettings({ warningThresholdPercent: Number(e.target.value) || 0 })}
+            />
+          </div>
+        </div>
+
         <div className={styles.menu}>
           <div className={styles.row}>
             <span>Thông báo đẩy</span>

@@ -12,7 +12,7 @@
   height: 48px;
   border-radius: 50%;
   border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top-color: var(--accent-cyan);
+  border-top-color: var(--accent-primary);
   animation: spin 0.9s linear infinite;
 }
 
@@ -21,11 +21,11 @@
 }
 
 .title {
-  font-size: 15px;
+  font-size: var(--fs-md);
   font-weight: 700;
 }
 
 .subtitle {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--text-muted);
 }

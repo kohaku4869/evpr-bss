@@ -6,7 +6,7 @@ const WS_LABEL = {
   reconnecting: 'Đang kết nối lại…',
 };
 
-export default function StatusHeader({ wsStatus, batteryPercent, batteryKwh, load }) {
+export default function StatusHeader({ wsStatus, batteryPercent, batteryKwh, load, rangeKm, timeToEmptyLabel, nearestStationKm }) {
   const isLow = batteryPercent != null && batteryPercent <= 15;
 
   return (
@@ -22,6 +22,17 @@ export default function StatusHeader({ wsStatus, batteryPercent, batteryKwh, loa
           <span className={`${styles.metricValue} ${isLow ? styles.batteryLow : ''}`}>
             {batteryPercent != null ? `${batteryPercent}%` : '--'} {batteryKwh != null ? `(${batteryKwh}kWh)` : ''}
           </span>
+        </div>
+        <div className={styles.metric}>
+          <span className={styles.metricLabel}>Tầm hoạt động</span>
+          <span className={styles.metricValue}>
+            {rangeKm != null ? `~${rangeKm}km` : '--'}
+            {timeToEmptyLabel ? ` · ${timeToEmptyLabel}` : ''}
+          </span>
+        </div>
+        <div className={styles.metric}>
+          <span className={styles.metricLabel}>Trạm đổi pin gần nhất</span>
+          <span className={styles.metricValue}>{nearestStationKm != null ? `${nearestStationKm}km` : '--'}</span>
         </div>
         <div className={styles.metric}>
           <span className={styles.metricLabel}>Tải trọng</span>

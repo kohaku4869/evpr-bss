@@ -70,6 +70,14 @@ driver_dist_dir = os.path.normpath(
 if os.path.exists(driver_dist_dir):
     app.mount("/driver", StaticFiles(directory=driver_dist_dir, html=True), name="driver")
 
+# Admin Ops Dashboard (React + Vite build output), additive — does not affect
+# /static, /demo, or /driver
+admin_dist_dir = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "admin-dashboard", "dist")
+)
+if os.path.exists(admin_dist_dir):
+    app.mount("/admin", StaticFiles(directory=admin_dist_dir, html=True), name="admin")
+
 
 @app.get("/demo", include_in_schema=False)
 @app.get("/", include_in_schema=False)

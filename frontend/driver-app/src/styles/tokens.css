@@ -3,8 +3,14 @@
   --bg-card: rgba(19, 27, 46, 0.92);
   --bg-card-border: rgba(255, 255, 255, 0.08);
 
-  --accent-cyan: #06b6d4;
-  --accent-blue: #3b82f6;
+  /* Teal-leaning brand accent (matches slide palette per team direction —
+     exact hex still to be refined against the deck). Old cyan/blue names are
+     kept as aliases so existing module.css files keep working during the
+     migration to the new names. */
+  --accent-primary: #14b8a6;
+  --accent-secondary: #0d9488;
+  --accent-cyan: var(--accent-primary);
+  --accent-blue: var(--accent-secondary);
   --accent-emerald: #10b981;
   --accent-amber: #f59e0b;
   --accent-rose: #f43f5e;
@@ -18,6 +24,16 @@
   --radius-lg: 18px;
   --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'SFMono-Regular', Consolas, monospace;
+
+  /* Font-size scale used across all *.module.css files — bumped up from the
+     previous raw 9-22px values for readability. */
+  --fs-2xs: 10px;
+  --fs-xs: 12px;
+  --fs-sm: 14px;
+  --fs-md: 16px;
+  --fs-lg: 18px;
+  --fs-xl: 22px;
+  --fs-display: 36px;
 
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
@@ -63,6 +79,25 @@ body {
 .stop-pin--depot { background: var(--accent-blue); border-radius: 6px; }
 .stop-pin--pickup { background: var(--accent-emerald); }
 .stop-pin--delivery { background: var(--accent-cyan); border-radius: 6px; }
+.stop-pin--station-available { background: var(--accent-amber); font-size: 12px; }
+.stop-pin--station-down { background: var(--accent-rose); font-size: 12px; }
+.stop-pin--station-onroute {
+  /* .stop-pin hardcodes 22x22 — must override explicitly here, since the
+     divIcon's iconSize only sizes Leaflet's (invisible) wrapper element, not
+     this inner div. Without it the "bigger" on-route marker rendered at the
+     same 22px as everything else, while its Leaflet anchor was still offset
+     for 30px — visually misaligning the pin from its true lat/lng. */
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.35), 0 0 10px rgba(245, 158, 11, 0.8);
+  animation: station-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes station-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.35), 0 0 10px rgba(245, 158, 11, 0.8); }
+  50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.12), 0 0 16px rgba(245, 158, 11, 1); }
+}
 .stop-pin--vehicle {
   background: transparent;
   border: none;
