@@ -80,9 +80,16 @@ if os.path.exists(admin_dist_dir):
 
 
 @app.get("/demo", include_in_schema=False)
-@app.get("/", include_in_schema=False)
 async def serve_demo():
     index_file = os.path.join(static_dir, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)
     return {"message": "EVPR-BSS Backend Running. Static UI not found."}
+
+
+@app.get("/", include_in_schema=False)
+async def serve_landing():
+    landing_file = os.path.join(static_dir, "landing.html")
+    if os.path.exists(landing_file):
+        return FileResponse(landing_file)
+    return await serve_demo()

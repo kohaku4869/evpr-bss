@@ -103,7 +103,7 @@ const MapView = forwardRef(function MapView({ route, stations, targetStop }, ref
             <Popup>
               <b>{st.is_available ? '⚡' : '✕ Ngưng hoạt động'} {st.name}</b><br />
               {isOnRoute && <><b>📍 Trạm trong lộ trình của bạn</b><br /></>}
-              Phí đổi pin: ${st.cost_swap?.toFixed?.(1)}
+              Phí đổi pin: {(st.cost_swap * 1000).toLocaleString('vi-VN')} đ
             </Popup>
           </Marker>
         );

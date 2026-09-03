@@ -28,7 +28,7 @@ const MAX_ALERTS = 50;
 // Mirrors backend/app/config.py's BASE_CONSUMPTION_RATE default (kWh per km
 // at zero load) — no API exposes it today, so the client-side "range" hint
 // approximates with the same constant rather than a real per-shipment figure.
-const BASE_CONSUMPTION_RATE_KM = 2.2;
+const BASE_CONSUMPTION_RATE_KM = 0.025;
 
 // No live speed telemetry either, so "time until empty" is range/assumed-speed
 // rather than a real ETA — a typical Hanoi delivery-moped urban average.

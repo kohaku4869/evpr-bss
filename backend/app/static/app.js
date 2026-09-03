@@ -22,7 +22,7 @@ let currentSegmentIdx = 0;
 let currentCoordIdx = 0;
 let currentSegmentCoords = [];
 let currentVehiclePos = null;
-let currentBattery = 40.0;
+let currentBattery = 1.5;
 let currentLoad = 0.0;
 
 // Initialize on DOM load
@@ -658,10 +658,10 @@ function updateVehicleHUD() {
   if (targetStop) {
     titleEl.textContent = isDriving ? "🛵 Vehicle Cruising (Road)" : "⏸️ Drive Paused";
     targetEl.textContent = `Target #${targetStop.sequence_index}: ${targetStop.label}`;
-    const batCapacity = currentRoute.battery_capacity_kwh || 40.0;
+    const batCapacity = currentRoute.battery_capacity_kwh || 1.5;
     const batVal = targetStop.arriving_battery ?? batCapacity;
     const batPercent = Math.min(100, Math.max(0, Math.round((batVal / batCapacity) * 100)));
-    batEl.textContent = `${batPercent}% (${batVal}kWh)`;
+    batEl.textContent = `${batPercent}% (${Number(batVal).toFixed(2)} kWh)`;
     loadEl.textContent = `${targetStop.current_load ?? 0} kg`;
   } else {
     titleEl.textContent = "🏁 Tour Completed";
@@ -697,9 +697,9 @@ function renderRouteStats() {
   distEl.textContent = `${currentRoute.total_distance_km || '--'} km`;
   stopsEl.textContent = `${doneCount} / ${totalCount}`;
 
-  const batCapacity = currentRoute.battery_capacity_kwh || 40.0;
+  const batCapacity = currentRoute.battery_capacity_kwh || 1.5;
   const lastActive = currentRoute.stops.filter(s => s.status === "done").pop() || currentRoute.stops[0];
-  batteryEl.textContent = `${lastActive.arriving_battery ?? batCapacity} / ${batCapacity} kWh`;
+  batteryEl.textContent = `${Number(lastActive.arriving_battery ?? batCapacity).toFixed(2)} / ${batCapacity} kWh`;
 
   if (routingEngineEl && currentRoute.geometry_source) {
     const src = currentRoute.geometry_source.toUpperCase();
@@ -741,7 +741,7 @@ function renderStations() {
         <span class="station-dot ${isAvail ? 'avail' : 'down'}"></span>
         <div>
           <div class="station-name">${st.name}</div>
-          <div class="station-coords">(${st.lat.toFixed(4)}, ${st.lng.toFixed(4)}) • Swap Fee: $${st.cost_swap.toFixed(1)}</div>
+          <div class="station-coords">(${st.lat.toFixed(4)}, ${st.lng.toFixed(4)}) • Phí đổi: ${(st.cost_swap * 1000).toLocaleString('vi-VN')} đ</div>
         </div>
       </div>
       <button class="station-toggle-btn ${isAvail ? 'avail' : 'down'}" onclick="toggleStation(${st.id}, ${isAvail})">
@@ -793,7 +793,7 @@ function renderTimeline() {
       </div>
       <div class="stop-metrics">
         <span>Load: ${stop.current_load}kg</span>
-        <span>Bat: ${stop.arriving_battery}u</span>
+        <span>Bat: ${Number(stop.arriving_battery).toFixed(2)} kWh</span>
         <span class="sub-badge">${statusBadge}</span>
       </div>
     `;
@@ -833,7 +833,7 @@ function renderMap() {
       fillOpacity: st.is_available ? 0.35 : 0.5,
     });
     marker.bindPopup(
-      `<b>${st.is_available ? "⚡" : "✕ DOWN"} ${st.name}</b><br>Swap Fee: $${st.cost_swap.toFixed(1)}<br>Coords: ${st.lat.toFixed(4)}, ${st.lng.toFixed(4)}`
+      `<b>${st.is_available ? "⚡" : "✕ DOWN"} ${st.name}</b><br>Phí đổi pin: ${(st.cost_swap * 1000).toLocaleString('vi-VN')} đ<br>Tọa độ: ${st.lat.toFixed(4)}, ${st.lng.toFixed(4)}`
     );
     marker.addTo(stationMarkersLayer);
   });

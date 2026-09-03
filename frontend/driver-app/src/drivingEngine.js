@@ -125,7 +125,7 @@ export function syncAfterPatch(route, state, previousTargetStop) {
 // Ported from updateVehicleHUD/renderRouteStats: battery/load are planned
 // per-stop figures from ALNS (arriving_battery), not live telemetry.
 export function deriveVehicleStatus(route, targetStop) {
-  const batteryCapacity = route?.battery_capacity_kwh || 40.0;
+  const batteryCapacity = route?.battery_capacity_kwh || 1.5;
   const stops = route?.stops || [];
   const reference = targetStop || [...stops].reverse().find((s) => s.status === 'done') || stops[0] || null;
 

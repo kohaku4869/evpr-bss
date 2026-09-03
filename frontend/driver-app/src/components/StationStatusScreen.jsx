@@ -41,7 +41,7 @@ export default function StationStatusScreen({ stations, referenceLat, referenceL
                 <div className={styles.name}>{s.name}</div>
                 <div className={styles.meta}>
                   {s.distanceKm != null && <span>{s.distanceKm.toFixed(1)}km</span>}
-                  <span>Phí đổi pin: ${s.cost_swap?.toFixed?.(1)}</span>
+                  <span>Phí đổi: {(s.cost_swap * 1000).toLocaleString('vi-VN')} đ</span>
                 </div>
               </div>
             </div>

@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: evpr-bss-demo
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /demo
+    envVars:
+      - key: ROUTING_ENABLE_EXTERNAL
+        value: "true"

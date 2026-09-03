@@ -10,7 +10,7 @@ export const VEHICLE_TYPES = [
 
 const DEFAULT_SETTINGS = {
   vehicleType: 'e-motorbike',
-  batteryCapacityKwh: 60,
+  batteryCapacityKwh: 1.5,
   warningThresholdPercent: 20,
 };
 

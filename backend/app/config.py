@@ -19,26 +19,19 @@ class Settings(BaseSettings):
     DEPOT_LAT: float = 21.0285
     DEPOT_LNG: float = 105.8542
     VEHICLE_CAPACITY_Q: float = 50.0  # Max payload kg
-    # Max battery units / kWh. Tuned for REAL road-network distances (post OSRM
-    # table matrix integration) rather than straight-line: at 40 the demo route's
-    # battery margin was razor-thin on real road km, so nearly every alternative
-    # BSS candidate failed the reactive local-patch feasibility check (0/29
-    # feasible in a manual sweep). At 60, ALNS still requires ~1 swap station per
-    # ~45-55km Hanoi tour (battery-aware routing stays demonstrable), while the
-    # reactive layer has enough margin to usually find a feasible replacement
-    # station (~21/29 in the same sweep) when the planned one goes down.
-    BATTERY_CAPACITY_B: float = 60.0
-    BASE_CONSUMPTION_RATE: float = 2.2  # energy per km with 0 load
-    LOAD_CONSUMPTION_FACTOR: float = 0.04  # additional energy per km per unit load
-    DEFAULT_SWAP_COST: float = 5.0
+    # Max battery capacity (kWh). Standard swappable pack for urban delivery
+    # e-motorbikes in Vietnam (e.g. Selex Camel, Honda Mobile Power Pack e: 1.3 - 1.5 kWh).
+    # With 1.5 kWh and 0.025 kWh/km, a full charge gives ~45-50km usable range, which
+    # naturally requires ~1 swap station visit on a ~45-55km Hanoi delivery tour.
+    BATTERY_CAPACITY_B: float = 1.5
+    BASE_CONSUMPTION_RATE: float = 0.025  # energy (kWh) per km with 0 load (25 Wh/km)
+    LOAD_CONSUMPTION_FACTOR: float = 0.0004  # additional kWh per km per kg of cargo
+    DEFAULT_SWAP_COST: float = 9.0  # 9.0 kVNĐ (~9,000 VND / pack swap fee)
     # Safety reserve model: the vehicle is never allowed to plan/arrive below this
-    # fraction of capacity, and a swap/charge only tops it up to this fraction (not
-    # 100%) rather than a full charge. This keeps a real buffer in the battery at
-    # all times so that when a reactive event fires (station down, new order),
-    # there is still slack to reach a farther station instead of the plan already
-    # having used the pack down to empty.
+    # fraction of capacity (15% reserve floor).
     BATTERY_MIN_RESERVE_RATIO: float = 0.15
-    BATTERY_SWAP_TARGET_RATIO: float = 0.80
+    # Swapping provides a fresh battery charged to 95% at the BSS.
+    BATTERY_SWAP_TARGET_RATIO: float = 0.95
 
     # Real map/routing parameters
     TOMTOM_API_KEY: str = ""
